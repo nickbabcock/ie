@@ -23,6 +23,8 @@ func RegisterRoutes(s *server.FHIRServer, selfURL, riskServiceEndpoint string) f
 	//s.AddMiddleware("Group", middleware.AuthHandler())
 	//s.AddMiddleware("Patient", middleware.AuthHandler())
 
+	s.Engine.Use(middleware.AuthHandler())
+
 	s.AddMiddleware("Condition", watch)
 
 	s.AddMiddleware("MedicationStatement", watch)

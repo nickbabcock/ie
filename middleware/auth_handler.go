@@ -15,7 +15,7 @@ func AuthHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// For now, only authenticate on GET.  Need to lock it down more later, but will need to update
 		// the generate and upload tools at the same time.
-		if c.Request.Method != "GET" {
+		if c.Request.Method != "GET" || c.Request.URL.Path == "login" {
 			c.Next()
 			return
 		}

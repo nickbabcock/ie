@@ -106,39 +106,3 @@ func LogoutHandler(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
 }
-
-func RegisterHandler(c *gin.Context) {
-	var regform registrationRequestForm
-	if err := c.Bind(&regform); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	//grab username, password, and password confirmation from object
-	username, password, confirmation := regform.Identification, regform.Password, regform.Confirmation
-
-	if count, err := server.Database.C("users").Find(bson.M{"username": username}).Count(); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	} else if count != 0 {
-		c.JSON(http.StatusConflict, errorForm{Error: "Username already exists"})
-		return
-	}
-
-	if password != confirmation {
-		c.JSON(http.StatusBadRequest, errorForm{Error: "Password and confirmation must match"})
-		return
-	}
-
-	newuser := &models.User{
-		Username: username,
-		ID:       bson.NewObjectId(),
-	}
-	newuser.SetPassword(password)
-
-	if err := server.Database.C("users").Insert(newuser); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	c.String(http.StatusOK, "User registered")
-}
