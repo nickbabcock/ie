@@ -18,11 +18,12 @@ mongodb:
   ports:
     - "27017:27017"
 riskservice:
-  build: ../riskservice
+  build: ../multifactorriskservice
   ports:
     - "9000:9000"
   links:
     - mongodb:mongo
+  command: /bin/bash -c "/go/src/github.com/intervention-engine/multifactorriskservice/multifactorriskservice -redcap http://redcapsrv.org -token abcdefg -fhir '$$IE_PORT_3001_TCP_ADDR:$$IE_PORT_3001_TCP_PORT' -cron 0 0 22 * * *"
 nginx:
   build: ../nginx
   ports:
